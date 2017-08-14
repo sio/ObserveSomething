@@ -30,19 +30,21 @@ Window.__doc__ = """
     """
 
 
-def opened_windows():
+def opened_windows(*a, **kw):
     """
     Generator that yields Window tuples for all visible windows
+
+    All arguments are passed to pywinauto.findwindows.find_windows()
     """
     desktop = pywinauto.Desktop()
-    for handle in pywinauto.findwindows.find_windows():
+    for handle in pywinauto.findwindows.find_windows(*a, **kw):
         spec = desktop.window(handle=handle)
         title = spec.window_text()
         pid = spec.process_id()
         yield Window(spec, title, handle, pid)
 
 
-def select_window():
+def select_windows():
     """
     Terminal UI letting user select one or multiple windows
     from the list of opened windows.
