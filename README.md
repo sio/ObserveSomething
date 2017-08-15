@@ -38,6 +38,8 @@ Configuration is done via INI file (`observe.ini` or the first command
 line argument). Upon launch user is asked to provide the list of windows
 to monitor. After that ObserveSomething runs on its own until stopped.
 
+Refer to the [sample file](docs/observe-sample.ini) for more information.
+
 
 # Contributing
 All contributions are welcome!
