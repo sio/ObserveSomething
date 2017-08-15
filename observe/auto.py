@@ -5,6 +5,7 @@ Code for UI automation
 
 import pywinauto
 import re
+import sys
 from collections import namedtuple
 from PIL import ImageGrab  # Windows-only
 
@@ -67,7 +68,10 @@ def select_windows():
         print("{n: >5}: {title}".format(n=num+1, title=short_title))
     selected = list()
     while not (selected and all(n <= len(windows) for n in selected)):
-        reply = input("\nPLEASE SELECT WINDOWS (enter their numbers):\n")
+        try:
+            reply = input("\nPLEASE SELECT WINDOWS (type their numbers):\n")
+        except KeyboardInterrupt:
+            sys.exit(0)
         selected = [int(num) for num in re.findall(numbers, reply)]
     return [windows[n-1] for n in selected]
 
