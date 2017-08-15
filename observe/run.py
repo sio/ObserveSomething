@@ -73,7 +73,9 @@ def main(config_path):
     # Load configuration
     config = ConfigParser()
     config.read_dict(DEFAULT_CONFIGURATION)
-    config.read(config_path, encoding="utf-8")
+    if not config.read(config_path, encoding="utf-8"):
+        error = "unable to parse configuration file: {}".format(config_path)
+        raise ValueError(error)
 
     # Set up the environment for worker
     delay = parse_time(config["observe"]["delay"]).total_seconds()
