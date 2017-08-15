@@ -20,6 +20,9 @@ build_exe_options = {
         "unittest",
         "urllib",
         ],
+    "include_files": [
+        "docs/observe-sample.ini",
+        ],
     }
 
 setup(
