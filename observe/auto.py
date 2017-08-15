@@ -6,6 +6,7 @@ Code for UI automation
 import pywinauto
 import re
 from collections import namedtuple
+from PIL import ImageGrab  # Windows-only
 
 
 Window = namedtuple("Window", "specification title handle pid")
@@ -69,3 +70,9 @@ def select_windows():
         reply = input("\nPLEASE SELECT WINDOWS (enter their numbers):\n")
         selected = [int(num) for num in re.findall(numbers, reply)]
     return [windows[n-1] for n in selected]
+
+
+def take_screenshot(filename):
+    """Capture screen and save image to filename"""
+    image = ImageGrab.grab()
+    image.save(filename)
