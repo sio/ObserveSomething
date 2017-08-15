@@ -4,7 +4,15 @@ Access COM object from Python
 
 
 import os.path
-from comtypes.client import GetActiveObject, CreateObject
+import logging
+from comtypes.client import GetActiveObject, CreateObject, _generate
+
+
+# Do not spam stdout with "# Generating comtypes.gen..." messages
+_generate.__verbose__ = False
+for name, logger in logging.Logger.manager.loggerDict.items():
+    if name.startswith("comtypes"):
+        logger.setLevel(logging.CRITICAL)
 
 
 def make_COM(prog_id, allow_reuse=True):
