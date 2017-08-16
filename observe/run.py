@@ -73,20 +73,20 @@ def main(config_path):
     # Load configuration
     config = ConfigParser()
     config.read_dict(DEFAULT_CONFIGURATION)
-    if not config.read(config_path, encoding="utf-8"):
-        error = "unable to parse configuration file: {}".format(config_path)
-        raise ValueError(error)
+    config.read(config_path, encoding="utf-8")
 
     # Set up the environment for worker
     delay = parse_time(config["observe"]["delay"]).total_seconds()
     key_delay = parse_time(config["observe"]["typing_delay"]).total_seconds()
 
     address_line = config["report"]["to"]
-    if address_line:
-        addresses = address_line.split()
-    else:
-        message = "recipients' e-mail not found in {}".format(config_path)
-        raise ValueError(message)
+    while not address_line.strip():
+        message = [
+            "Recipient addresses not found in {}".upper().format(config_path),
+            "Please enter space separated email addresses:\n"
+            ]
+        address_line = input("\n".join(message))
+    addresses = address_line.split()
 
     image_directory = config["observe"]["image_dir"]
     temp = None
