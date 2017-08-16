@@ -19,7 +19,7 @@ possible (SendKeys) and uses the mail app most office PCs have preconfigured
 
 
 # Installation and usage
-This application requires no installation, just download a zip archive or the
+This application requires no installation, just download a zip archive of the
 latest release and extract it anywhere you like. ObserveSomething does not
 store any persistent data outside the application directory, so it can be
 installed on the thumb drive and used as a portable application.
