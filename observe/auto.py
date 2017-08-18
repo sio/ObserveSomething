@@ -72,7 +72,7 @@ def select_windows():
             reply = input("\nPLEASE SELECT WINDOWS (type their numbers):\n")
         except KeyboardInterrupt:
             sys.exit(0)
-        selected = [int(num) for num in re.findall(numbers, reply)]
+        selected = [int(num) for num in numbers.findall(reply)]
     return [windows[n-1] for n in selected]
 
 
