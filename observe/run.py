@@ -103,17 +103,18 @@ def main(config_path):
         iter_num += 1
         images = list()
         for window_tuple in windows:
-            # Bring window to front
+            # Prepare window: maximize, focus, refresh information
             window = window_tuple.specification
             window.minimize()
             window.maximize()
             window.set_focus()
+            sleep(key_delay)  # some apps are not responsive at the moment of maximizing
             window.type_keys(
                 config["observe"]["send_keys"],
                 pause=key_delay)
-            sleep(key_delay)
 
             # Take screenshot
+            sleep(key_delay)
             image = image_name.format(date=date,
                                       window_id=window_tuple.handle,
                                       job_id=iter_num)
