@@ -60,12 +60,12 @@ def select_windows():
 
     print("\nLIST OF OPEN WINDOWS:")
     max_len = 70
-    for num, window in enumerate(windows):
+    for num, window in enumerate(windows, 1):
         short_title = "{}..".format(window.title[:max_len]) \
                       if len(window.title) > max_len \
                       else window.title
         if not short_title: short_title = "<Title Unknown>"
-        print("{n: >5}: {title}".format(n=num+1, title=short_title))
+        print_to_windows_console("{n: >5}: {title}".format(n=num, title=short_title))
     selected = list()
     while not (selected and all(n <= len(windows) for n in selected)):
         try:
@@ -80,3 +80,20 @@ def take_screenshot(filename):
     """Capture screen and save image to filename"""
     image = ImageGrab.grab()
     image.save(filename)
+
+
+def print_to_windows_console(string, end="\n", placeholder="?"):
+    """
+    Print string and replace unprintable characters with placeholder.
+
+    Workaround for printing arbitrary output to windows console.
+    """
+    try:
+        print(string, end=end)
+    except UnicodeEncodeError:
+        for char in string:
+            try:
+                print(char, end="")
+            except UnicodeEncodeError:
+                print(placeholder, end="")
+        print(end, end="")
