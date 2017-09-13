@@ -1,0 +1,4 @@
+comtypes
+cx-Freeze
+Pillow
+pywinauto
