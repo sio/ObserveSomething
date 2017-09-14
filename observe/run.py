@@ -150,16 +150,16 @@ def main(config_path):
     while True:
         iter_num += 1
         images = list()
-        for window_tuple in windows:
+        for number, window in enumerate(windows, 1):
             # Prepare window: maximize, focus, refresh information
             prepare(
-                window_tuple.specification,
+                window.specification,
                 keys=config["observe"]["send_keys"],
                 delay=key_delay)
 
             # Take screenshot
             image = image_name.format(date=date,
-                                      window_id=window_tuple.handle,
+                                      window_id=number,
                                       job_id=iter_num)
             take_screenshot(image)
             images.append(image)
