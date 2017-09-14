@@ -93,6 +93,16 @@ def parse_time(interval):
     return timedelta(**parsed)
 
 
+def prepare(window, keys, delay):
+    """Prepare window for taking screenshot"""
+    window.minimize()
+    window.maximize()
+    window.set_focus()
+    sleep(delay)  # some apps are not responsive at the moment of maximizing
+    window.type_keys(keys, pause=delay)
+    sleep(delay)
+
+
 def main(config_path):
     """Command line interface for ObserveSomething"""
     SCREENSHOT_NAME = "{date}_win{window_id}_scr{job_id}.png"
@@ -132,17 +142,12 @@ def main(config_path):
         images = list()
         for window_tuple in windows:
             # Prepare window: maximize, focus, refresh information
-            window = window_tuple.specification
-            window.minimize()
-            window.maximize()
-            window.set_focus()
-            sleep(key_delay)  # some apps are not responsive at the moment of maximizing
-            window.type_keys(
-                config["observe"]["send_keys"],
-                pause=key_delay)
+            prepare(
+                window_tuple.specification,
+                keys=config["observe"]["send_keys"],
+                delay=key_delay)
 
             # Take screenshot
-            sleep(key_delay)
             image = image_name.format(date=date,
                                       window_id=window_tuple.handle,
                                       job_id=iter_num)
