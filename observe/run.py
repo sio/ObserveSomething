@@ -94,7 +94,17 @@ def parse_time(interval):
 
 
 def prepare(window, keys, delay):
-    """Prepare window for taking screenshot"""
+    """
+    Prepare window for taking screenshot
+
+    Arguments
+    window
+        Pywinauto window specification
+    keys
+        String with keys to be sent to trigger information refresh
+    delay
+        Delay in seconds between keypresses
+    """
     window.minimize()
     window.maximize()
     window.set_focus()
