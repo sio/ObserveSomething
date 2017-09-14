@@ -151,25 +151,37 @@ def main(config_path):
         iter_num += 1
         images = list()
         for number, window in enumerate(windows, 1):
-            # Prepare window: maximize, focus, refresh information
-            prepare(
-                window.specification,
-                keys=config["observe"]["send_keys"],
-                delay=key_delay)
+            prepare_success = False
+            with verbose_suppress(Exception):
+                prepare(window.specification,
+                        keys=config["observe"]["send_keys"],
+                        delay=key_delay)
+                prepare_success = True
 
-            # Take screenshot
+            if not prepare_success:  # try to dismiss popup/dialog with Esc
+                with verbose_suppress(Exception):
+                    window.specification.type_keys("{ESC}")
+                    sleep(key_delay)
+                    prepare(window.specification,
+                            keys=config["observe"]["send_keys"],
+                            delay=key_delay)
+
             image = image_name.format(date=date,
                                       window_id=number,
                                       job_id=iter_num)
-            take_screenshot(image)
-            images.append(image)
+            screenshot_success = False
+            with verbose_suppress(Exception):
+                take_screenshot(image)
+                screenshot_success = True
+            if screenshot_success: images.append(image)
 
         # Send all screenshots
-        mail = make_MailItem(recipients=addresses,
-                             subject=config["report"]["subject"],
-                             body=config["report"]["body"],
-                             attachments=images)
-        mail.Send()
+        with verbose_suppress(Exception):
+            mail = make_MailItem(recipients=addresses,
+                                 subject=config["report"]["subject"],
+                                 body=config["report"]["body"],
+                                 attachments=images)
+            mail.Send()
 
         # Show progress in terminal
         info = "\n".join([
