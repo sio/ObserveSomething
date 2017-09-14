@@ -95,7 +95,7 @@ def parse_time(interval):
 
 def prepare(window, keys, delay):
     """
-    Prepare window for taking screenshot
+    Prepare window for taking screenshot: maximize, focus, refresh information
 
     Arguments
     window
