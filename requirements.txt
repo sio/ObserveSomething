@@ -1,3 +1,4 @@
+git+git://github.com/sio/toolpot.git
 comtypes
 cx-Freeze
 Pillow

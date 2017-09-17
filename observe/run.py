@@ -13,7 +13,7 @@ from contextlib import contextmanager
 from datetime import datetime, timedelta
 from time import sleep
 from tempfile import TemporaryDirectory
-from .com import make_MailItem
+from toolpot.windows.com import MailItem
 from .auto import select_windows, take_screenshot
 
 
@@ -177,7 +177,7 @@ def main(config_path):
 
         # Send all screenshots
         with verbose_suppress(Exception):
-            mail = make_MailItem(recipients=addresses,
+            mail = MailItem(recipients=addresses,
                                  subject=config["report"]["subject"],
                                  body=config["report"]["body"],
                                  attachments=images)
