@@ -4,15 +4,12 @@ Main executable module of ObserveSomething
 
 
 import os.path
-import re
-import traceback
-import sys
-from collections import defaultdict
 from configparser import ConfigParser
-from contextlib import contextmanager
-from datetime import datetime, timedelta
+from datetime import datetime
 from time import sleep
 from tempfile import TemporaryDirectory
+from toolpot.python.context import suppress_and_log
+from toolpot.python.input import parse_time
 from toolpot.windows.com import MailItem
 from .auto import select_windows, take_screenshot
 
@@ -31,66 +28,6 @@ DEFAULT_CONFIGURATION = {
     },
 }
 
-
-@contextmanager
-def verbose_suppress(*exceptions, logger=None):
-    """
-    Context manager to suppress specified exceptions verbosely.
-
-    After the exception is suppressed, execution proceeds with the next
-    statement following the with statement.
-
-    Suppressed exceptions are logged to stderr by default.
-    If logger is specified, exceptions are logged there using logging.ERROR
-    priority.
-
-    See also: contextlib.suppress - same functionality without logging.
-    """
-    try:
-        yield
-    except exceptions as e:
-        message = "{} has been suppressed, see traceback below:".format(type(e).__name__)
-        if logger:
-            logger.exception(message)
-        else:
-            print(message, file=sys.stderr)
-            traceback.print_exc()
-
-
-def parse_time(interval):
-    """
-    Parse time intervals like the ones given to Linux sleep command:
-    NUMBER[SUFFIX]
-
-    Example: '3m'    = 3 minutes
-             '5h 1m' = 5 hours 1 minutes
-             '21'    = 21 seconds
-
-    SUFFIX may be 's' for seconds (the default), 'm' for minutes, 'h' for
-    hours 'd' for days or 'w' for weeks.  NUMBER has to be an integer.
-    Given two or more whitespace separated words, return the amount of time
-    specified by the sum of their values.
-
-    Return datetime timedelta object.
-    """
-    expanded = {"w": "weeks",
-                "d": "days",
-                "h": "hours",
-                "m": "minutes",
-                "s": "seconds",
-                "" : "seconds"}
-    pattern = re.compile(r"\s*(\d+)([wdhms]?)\s*")
-
-    parsed = defaultdict(int)
-    for word in str(interval).split():
-        match = pattern.match(word)
-        if match:
-            number, suffix = match.groups()
-            parsed[expanded[suffix]] += int(number)
-        else:
-            message = "invalid time interval: {}".format(word)
-            raise ValueError(message)
-    return timedelta(**parsed)
 
 
 def prepare(window, keys, delay):
@@ -152,14 +89,14 @@ def main(config_path):
         images = list()
         for number, window in enumerate(windows, 1):
             prepare_success = False
-            with verbose_suppress(Exception):
+            with suppress_and_log(Exception):
                 prepare(window.specification,
                         keys=config["observe"]["send_keys"],
                         delay=key_delay)
                 prepare_success = True
 
             if not prepare_success:  # try to dismiss popup/dialog with Esc
-                with verbose_suppress(Exception):
+                with suppress_and_log(Exception):
                     window.specification.type_keys("{ESC}")
                     sleep(key_delay)
                     prepare(window.specification,
@@ -170,13 +107,13 @@ def main(config_path):
                                       window_id=number,
                                       job_id=iter_num)
             screenshot_success = False
-            with verbose_suppress(Exception):
+            with suppress_and_log(Exception):
                 take_screenshot(image)
                 screenshot_success = True
             if screenshot_success: images.append(image)
 
         # Send all screenshots
-        with verbose_suppress(Exception):
+        with suppress_and_log(Exception):
             mail = MailItem(recipients=addresses,
                                  subject=config["report"]["subject"],
                                  body=config["report"]["body"],
