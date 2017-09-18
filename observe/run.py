@@ -115,9 +115,9 @@ def main(config_path):
         # Send all screenshots
         with suppress_and_log(Exception):
             mail = MailItem(recipients=addresses,
-                                 subject=config["report"]["subject"],
-                                 body=config["report"]["body"],
-                                 attachments=images)
+                            subject=config["report"]["subject"],
+                            body=config["report"]["body"],
+                            attachments=images)
             mail.Send()
 
         # Show progress in terminal
