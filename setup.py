@@ -26,12 +26,12 @@ setup(
     package_data={},
     include_package_data=True,
     install_requires=[
-        "toolpot<=99",
         "Pillow",
         "comtypes",
         "pywinauto",
+        "toolpot<=99",
         ],
-    dependency_links=["git+git://github.com/sio/toolpot.git#egg=toolpot-99"],
+    dependency_links=["https://github.com/sio/toolpot/archive/master.zip#egg=toolpot-99"],
     python_requires=">=3.3",
     zip_safe=False,
     )
