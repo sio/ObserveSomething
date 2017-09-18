@@ -3,7 +3,7 @@ Stay updated on the progress of some long running job you've launched at the
 office while you're away.
 
 
-# What this application does?
+# What this application does
 For each of the windows user asked to monitor, ObserveSomething repeats the
 following steps at regular intervals:
 - Bring window to focus
