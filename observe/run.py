@@ -84,7 +84,7 @@ def main(config_path):
     image_directory = config["observe"]["image_dir"]
     temp = None
     if not image_directory:
-        temp = TemporaryDirectory(prefix="ObserveSomething")
+        temp = TemporaryDirectory(prefix="ObserveSomething-")
         image_directory = temp.name
     image_name = os.path.join(image_directory, SCREENSHOT_NAME)
     date = datetime.now().strftime(DATE_FORMAT)
