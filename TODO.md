@@ -3,7 +3,7 @@
 # Missing features
 
 # Refactoring
-- [ ] observe.run:main()
+- [x] observe.run:main()
     - [x] Use smaller, atomic functions:
         - [x] prepare_window(spec, keys, delay)
     - [x] Use simpler naming convention for screenshots: window.handle is unreliable
@@ -15,6 +15,6 @@
         - [x] prepare_window
         - [x] take_screenshot
         - [x] MailItem.Send
-    - [ ] Use logging module to log silenced exceptions
+    - [x] Use logging module to log silenced exceptions
 - [x] Use venv when building with cxFreeze
     - [x] Set up virtual environment with all dependencies
