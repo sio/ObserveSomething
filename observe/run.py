@@ -3,11 +3,13 @@ Main executable module of ObserveSomething
 """
 
 
+import logging
 import os.path
 from configparser import ConfigParser
 from datetime import datetime
 from time import sleep
 from tempfile import TemporaryDirectory
+from toolpot.python import log
 from toolpot.python.context import suppress_and_log
 from toolpot.python.input import parse_time
 from toolpot.windows.com import MailItem
@@ -60,6 +62,12 @@ def main(config_path):
     config.read_dict(DEFAULT_CONFIGURATION)
     config.read(config_path, encoding="utf-8")
 
+    # Enable logging
+    log.setup(__name__.split(".")[0],
+              filename=os.path.splitext(config_path)[0] + ".log")
+    logger = logging.getLogger(__name__)
+    logger.debug("Configured logging for {}".format(__name__))
+
     # Set up the environment for worker
     delay = parse_time(config["observe"]["delay"]).total_seconds()
     key_delay = parse_time(config["observe"]["typing_delay"]).total_seconds()
@@ -83,37 +91,44 @@ def main(config_path):
 
     # Main worker loop
     windows = select_windows()
+    logger.debug("Start observing {!r}".format(windows))
     iter_num = 0
     while True:
         iter_num += 1
+        logger.debug("Job #{} started".format(iter_num))
         images = list()
         for number, window in enumerate(windows, 1):
             prepare_success = False
-            with suppress_and_log(Exception):
+            with suppress_and_log(Exception, logger=logger):
                 prepare(window.specification,
                         keys=config["observe"]["send_keys"],
                         delay=key_delay)
                 prepare_success = True
 
             if not prepare_success:  # try to dismiss popup/dialog with Esc
-                with suppress_and_log(Exception):
+                with suppress_and_log(Exception, logger=logger):
                     window.specification.type_keys("{ESC}")
                     sleep(key_delay)
                     prepare(window.specification,
                             keys=config["observe"]["send_keys"],
                             delay=key_delay)
+            logger.debug("{window} ready: {status}".format(
+                                    window=window,
+                                    status=prepare_success))
 
             image = image_name.format(date=date,
                                       window_id=number,
                                       job_id=iter_num)
             screenshot_success = False
-            with suppress_and_log(Exception):
+            with suppress_and_log(Exception, logger=logger):
                 take_screenshot(image)
                 screenshot_success = True
             if screenshot_success: images.append(image)
+            logger.debug(
+                "screenshot status: {}, path: {}".format(screenshot_success, image))
 
         # Send all screenshots
-        with suppress_and_log(Exception):
+        with suppress_and_log(Exception, logger=logger):
             mail = MailItem(recipients=addresses,
                             subject=config["report"]["subject"],
                             body=config["report"]["body"],
@@ -125,6 +140,7 @@ def main(config_path):
             "\rJob #{} done, next job scheduled...".format(iter_num),
             "Press Ctrl+C to exit"])
         print(info, end="")
+        logger.debug("Job #{} finished".format(iter_num))
         try:
             sleep(delay)
         except KeyboardInterrupt:
