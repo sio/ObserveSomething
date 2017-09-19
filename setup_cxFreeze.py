@@ -19,6 +19,8 @@ build_exe_options = {
         "setuptools",
         "unittest",
         "urllib",
+        "pip",
+        "sqlite3",
         ],
     "include_files": [
         "docs/observe-sample.ini",
